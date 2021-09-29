@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brownish">#D48166</color>
+    <color name="cream">#FDEBE5</color>
+    <color name="cream_50_alpha">#80FDEBE5</color>
+    <color name="dark_greyish">#373A36</color>
+    <color name="light_greyish">#E6E2DD</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="grey_50_alpha">#80373A36</color>
+</resources>
