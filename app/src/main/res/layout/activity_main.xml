@@ -40,6 +40,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_activity_materialToolbar" />
+    <TextView
+        android:id="@+id/no_diary_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No diary yet"
+        android:textColor="@color/brownish_50_alpha"
+        android:shadowRadius="30"
+        android:textSize="15sp"
+        android:shadowColor="@color/cream"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/lottie_animation"
+        android:visibility="gone"
+        android:fontFamily="@font/pacifico"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_animation"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:lottie_rawRes="@raw/diary_animation"
+        app:layout_constraintTop_toBottomOf="@+id/main_activity_materialToolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:adjustViewBounds="true"
+        app:lottie_loop="true"
+        android:visibility="gone"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp"
+    android:layout_margin="20dp"
+    android:layout_gravity="center">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cream_50_alpha">
+    <ImageView
+        android:id="@+id/adapter_diary_image"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:visibility="visible"
+         />
+    <TextView
+        android:id="@+id/adapter_diary_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Title of diary"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:shadowRadius="30"
+        android:shadowColor="@color/dark_greyish"
+        android:layout_alignParentTop="true"
+        />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/adapter_linear_layout_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#73373A36"
+        android:orientation="vertical"
+        android:layout_alignBottom="@+id/adapter_diary_image"
+        >
+        <TextView
+            android:id="@+id/adapter_diary_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Place Name"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/adapter_diary_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:minLines="3"
+            android:maxLines="5"
+            android:maxLength="500"
+            android:padding="10dp"
+            android:text="srhfbdnkfjpbhgdlfznjsmcaEDFGLBVF Dlfrkemwjrnj emfenv ecrinerjv kdofrenve kdofrnkemdmkefrvi[envrkmfovrnibkv rnvkmfpmrvmfwvfcmropgrmkve,fvmr kmrgv,eevmro,vrkm emv NMCKEFRJVNFJ MDCERVB MURBH FEMDFJRHPVUBF D,NBG F,CKJN JGFCD,EN JCN JGFC,N GCR,VN T"
+            android:textColor="@color/white"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
+
