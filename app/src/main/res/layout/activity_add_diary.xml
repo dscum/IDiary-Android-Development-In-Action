@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="150dp"
-        android:maxHeight="250dp"
+        android:maxHeight="350dp"
         android:adjustViewBounds="true"
         android:layout_below="@id/diary_note"
         android:layout_margin="10dp"
