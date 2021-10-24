@@ -14,10 +14,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,37 +39,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 import org.tensorflow.lite.DataType;
-import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.support.common.FileUtil;
-import org.tensorflow.lite.support.common.TensorProcessor;
-import org.tensorflow.lite.support.common.ops.NormalizeOp;
-import org.tensorflow.lite.support.common.ops.QuantizeOp;
+import org.tensorflow.lite.support.common.ops.CastOp;
 import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
-import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
-import org.tensorflow.lite.support.image.ops.Rot90Op;
 import org.tensorflow.lite.support.label.Category;
-import org.tensorflow.lite.support.label.TensorLabel;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
-
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class AddDiary extends AppCompatActivity {
     //firebase variables
@@ -131,7 +111,6 @@ public class AddDiary extends AppCompatActivity {
         saveDiaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //first need to get all user input in edit texts and if there is an image
                 String title=diaryTitle.getText().toString();
                 String note=diaryNote.getText().toString();
@@ -346,21 +325,18 @@ public class AddDiary extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case STORAGE_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    //if the access granted then we open gallery
-                    if (storageAccepted) {
-                        pickFromGallery();
-                    } else {
-                        //if not granted we send request again for access and
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_REQUEST_CODE);
+        if (requestCode == STORAGE_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+                boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                //if the access granted then we open gallery
+                if (storageAccepted) {
+                    pickFromGallery();
+                } else {
+                    //if not granted we send request again for access and
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_REQUEST_CODE);
 
-                    }
                 }
             }
-            break;
         }
     }
 
@@ -381,74 +357,41 @@ public class AddDiary extends AppCompatActivity {
     }
     private void predictLandMark(Uri selectedImage){
         try {
-            Bitmap bitmap =  MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImage);
-//            Bitmap rgbBitmap=rgbBitmap(bitmap);
+            //convert selected image uri to bitmap
+            InputStream imageStream=getApplication().getContentResolver().openInputStream(selectedImage);
+            Bitmap bitmap =  BitmapFactory.decodeStream(imageStream);
+            // need to preprocess the image before feeding to model based on input constraint
             ImageProcessor imageProcessor=new ImageProcessor.Builder()
-                    .add(new ResizeOp(321,321, ResizeOp.ResizeMethod.BILINEAR))
-                    .add(new Rot90Op())
-                    .add(new NormalizeOp(127.5f,127.5f))
-                    .add(new QuantizeOp(0.0f,1.0f))
+                    .add(new ResizeOp(321,321, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR)) //size 321x321
+                    .add(new CastOp(DataType.UINT8)) //the type of image input should be UINT8 which currently our bitmap data type is float32
                     .build();
+            //load the model
             LiteModelOnDeviceVisionClassifierLandmarksClassifierAsiaV11 model = LiteModelOnDeviceVisionClassifierLandmarksClassifierAsiaV11.newInstance(this);
-            // Creates inputs for reference.
+            //initialize tensor image object with the required input data type which is UINT8
             TensorImage tensorImage=new TensorImage(DataType.UINT8);
+            // Initialize Tensor buffer object in order to feed it to the model
+            // based on input contraint the required shape is [1,321,321,3]
+            TensorBuffer tensorBuffer=TensorBuffer.createFixedSize(new int[]{1,321,321,3},DataType.UINT8);
+            //now we load our bitmap into tensor image we created earlier
             tensorImage.load(bitmap);
-            tensorImage=imageProcessor.process(tensorImage);
-            tensorImage.load(TensorBuffer.createFixedSize(new int[]{1,321,321,3},DataType.UINT8));
-//            tensorImage.getTensorBuffer().loadBuffer(ByteBuffer.allocateDirect(1*321*321*3));
-
-//            TensorImage image = TensorImage.fromBitmap(bitmap);
-//             Runs model inference and gets result.
-            LiteModelOnDeviceVisionClassifierLandmarksClassifierAsiaV11.Outputs outputs = model.process(tensorImage);
+            //then need to preprocess the tensor image from bitmap image we load above
+            TensorImage processedTensorImage=imageProcessor.process(tensorImage);
+            // now need to load the processed tensor image buffer into the tensor buffer object we created in line 400
+            tensorBuffer.loadBuffer(processedTensorImage.getBuffer());
+            //now we feed the tensorbuffer in the model to make prediction
+            LiteModelOnDeviceVisionClassifierLandmarksClassifierAsiaV11.Outputs outputs = model.process(tensorBuffer);
             List<Category> probability=outputs.getProbabilityAsCategoryList();
-//             Releases model resources if no longer used.
+//          Releases model resources if no longer used.
             model.close();
-//            TensorBuffer probabilityBuffer =
-//                    TensorBuffer.createFixedSize(new int[]{1, 98960}, DataType.UINT8);
-//
-//            Interpreter tflite=null;
-//            Map<String, Float> floatMap=null;
-//            try{
-//                MappedByteBuffer tfliteModel
-//                        = FileUtil.loadMappedFile(AddDiary.this,
-//                        "lite-model_on_device_vision_classifier_landmarks_classifier_asia_V1_1.tflite");
-//                tflite = new Interpreter(tfliteModel);
-//
-//            } catch (IOException e){
-//                Log.e("tfliteSupport", "Error reading model", e);
-//            }
-//
-//            // Running inference
-//            if(tflite!=null) {
-//                tflite.run(tensorImage.getBuffer(), probabilityBuffer.getBuffer());
-//            }
-//            final String ASSOCIATED_AXIS_LABELS="probability-labels-en.txt";
-//            List<String> associatedAxisLabels=null;
-//            try{
-//                associatedAxisLabels= FileUtil.loadLabels(this,ASSOCIATED_AXIS_LABELS);
-//
-//            }catch (IOException e){
-//                Log.e("tfliteSupport", "Error reading label file", e);
-//            }
-//            TensorProcessor probabilityProcessor=new TensorProcessor.Builder().add(new NormalizeOp(0,255)).build();
-//
-//            if(associatedAxisLabels!=null){
-//                TensorLabel labels = new TensorLabel(associatedAxisLabels,
-//                        probabilityProcessor.process(probabilityBuffer));
-//                floatMap=labels.getMapWithFloatValue();
-//            }
+            // next step is to find the label that has highest probability
             float max=0.0f;
             int bestPredictIndex=0;
-
-            for (int i=0;i<17771;i++){
+            for (int i=0;i<probability.size();i++){
                 if(probability.get(i).getScore()>max){
                     max=probability.get(i).getScore();
                     bestPredictIndex=i;
-                    Log.d("SCORES",probability.get(i).getLabel()+"");
                 }
             }
-
-
             //we use Glide to upload the image in our app
             Glide.with(this)
                     .load(selectedImage) //the uri of the image
@@ -457,58 +400,13 @@ public class AddDiary extends AppCompatActivity {
                     .into(diaryImage); //the image view that needs to be place in
             diaryImage.setVisibility(View.VISIBLE);
             diaryLoc.setVisibility(View.VISIBLE);
-            diaryLoc.setText(probability.get(bestPredictIndex).getScore()+""+probability.get(bestPredictIndex).getLabel());
-//            if(floatMap!=null){
-//                String highestPredict=Collections.max(floatMap.entrySet(),(ent1,ent2)-> ent1.getValue().compareTo(ent2.getValue())).getKey();
-//
-//                diaryLoc.setText(highestPredict);
-//
-//            }
-
-            diaryLoc.requestFocus(); //send request focus to let the user know it's editable
-
-
+            Log.d("PROB","highest probability:"+probability.get(bestPredictIndex).getScore()); // check in debugger the highest probability
+            diaryLoc.setText(probability.get(bestPredictIndex).getLabel());
+            diaryLoc.requestFocus(diaryLoc.getTextDirection()); // enable the edit text focus in case if prediction is wrong user must know it is editable by user.
         } catch (IOException e) {
-            // TODO Handle the exception
+            // if the prediction fails due to any reason
+            diaryLoc.setText("Could not predict the name of your selected image");
         }
     }
-    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
-        int originalWidth = bitmap.getWidth();
-        int originalHeight = bitmap.getHeight();
-        int resizedWidth = maxDimension;
-        int resizedHeight = maxDimension;
 
-        if (originalHeight > originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
-        } else if (originalWidth > originalHeight) {
-            resizedWidth = maxDimension;
-            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
-        } else if (originalHeight == originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = maxDimension;
-        }
-        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight,true);
-    }
-    private Bitmap rgbBitmap(Bitmap bmp){
-        int width=bmp.getWidth();
-        int height=bmp.getHeight();
-        //convert the bitmap to byte array
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-
-
-        int noPixels=byteArray.length/3; //3bytes per pixel
-        int[] colorPixels=new int[noPixels];
-        for (int i=0;i<colorPixels.length;i++){
-            int r=byteArray[3*i];
-            int g=byteArray[3*i+1];
-            int b=byteArray[3*i+2];
-            colorPixels[i]= Color.rgb(r,g,b);
-        }
-
-    return Bitmap.createBitmap(colorPixels,width,height, Bitmap.Config.ARGB_8888);
-
-    }
 }
