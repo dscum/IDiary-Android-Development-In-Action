@@ -48,6 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/add_diary_button"
         app:layout_constraintTop_toBottomOf="@+id/main_activity_materialToolbar" />
     <TextView
         android:id="@+id/no_diary_text_view"

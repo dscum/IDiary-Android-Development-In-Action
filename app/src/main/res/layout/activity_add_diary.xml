@@ -30,12 +30,11 @@
         android:id="@+id/diary_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="150dp"
-        android:maxHeight="350dp"
-        android:adjustViewBounds="true"
-        android:layout_below="@id/diary_note"
+        android:layout_above="@+id/save_diary_button"
+        android:layout_below="@id/diary_note_scrollview"
         android:layout_margin="10dp"
         android:src="@color/cream"
+        android:scaleType="fitXY"
         android:visibility="invisible" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -57,12 +56,16 @@
         android:layout_alignRight="@+id/diary_image"
         android:layout_alignLeft="@id/diary_image"
         android:elevation="3dp"/>
+    <ScrollView
+        android:id="@+id/diary_note_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/diary_title">
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/diary_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLength="500"
-        android:layout_below="@id/diary_title"
         android:background="@android:color/transparent"
         android:layout_margin="10dp"
         android:minLines="3"
@@ -72,6 +75,7 @@
         android:textColorHint="@color/brownish"
         android:textColor="@color/dark_greyish"
         android:maxLines="10"/>
+    </ScrollView>
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/add_diary_progress_bar"
         android:layout_width="wrap_content"
@@ -98,6 +102,5 @@
         android:backgroundTint="@color/cream"
         app:cornerRadius="0dp"
         android:insetBottom="0dp"/>
-
 
 </RelativeLayout>

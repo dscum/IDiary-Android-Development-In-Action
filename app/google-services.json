@@ -15,43 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "25798332959-0ju8kbfsgoicree40kuph525g3brlvtc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.idiaryapp",
-            "certificate_hash": "717437bf9561bb01685276df9c6bd956a7c29dc7"
-          }
-        },
-        {
-          "client_id": "25798332959-bltm92a7ngk6fnctddptveptcs4uiv84.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.idiaryapp",
-            "certificate_hash": "621927df116e9cffe19ca7c65f2cb9cfae1319ff"
-          }
-        },
-        {
-          "client_id": "25798332959-cotan48o7rn6d8a9jfrej5crrk2mr7m5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.idiaryapp",
-            "certificate_hash": "4cbaa24ea66b7f1339e0712603d51b573de8a392"
-          }
-        },
-        {
-          "client_id": "25798332959-nke4vd451fd5tkjqds0gk0d4sf0q53ll.apps.googleusercontent.com",
+          "client_id": "25798332959-5190getj8o7epaadcebc5n90vfji28m4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.idiaryapp",
             "certificate_hash": "7d4cc9605bb392452f3ec0a43c66c0422da5d61f"
-          }
-        },
-        {
-          "client_id": "25798332959-qf1q185lodrrh0n9sf51kgf6a8num9li.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.idiaryapp",
-            "certificate_hash": "9bd24931022c3dc29491b64a4b6f8e27b0c132d8"
           }
         },
         {
