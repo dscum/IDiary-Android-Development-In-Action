@@ -9,4 +9,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey_50_alpha">#80373A36</color>
+    <color name="brownish_50_alpha">#80D48166</color>
 </resources>

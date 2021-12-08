@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddDiary">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/add_diary_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="40dp"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        android:background="@color/cream"
+        app:titleTextColor="@color/brownish"
+        app:menu="@menu/add_diary_toolbar_menu"
+        />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/diary_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a title"
+        android:layout_below="@+id/add_diary_toolbar"
+        android:background="@color/cream"
+        android:padding="20dp"
+        android:maxLength="50"
+        android:textColorHint="@color/brownish"
+        android:textColor="@color/dark_greyish"/>
+    <ImageView
+        android:id="@+id/diary_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/save_diary_button"
+        android:layout_below="@id/diary_note_scrollview"
+        android:layout_margin="10dp"
+        android:src="@color/cream"
+        android:scaleType="fitXY"
+        android:visibility="invisible" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/diary_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
+        android:hint="Enter place name"
+        android:layout_alignBottom="@+id/diary_image"
+        android:layout_alignStart="@id/diary_image"
+        android:padding="10dp"
+        android:maxLength="50"
+        android:layout_alignEnd="@+id/diary_image"
+        android:backgroundTint="@color/brownish"
+        android:background="@color/grey_50_alpha"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:visibility="invisible"
+        android:layout_alignRight="@+id/diary_image"
+        android:layout_alignLeft="@id/diary_image"
+        android:elevation="3dp"/>
+    <ScrollView
+        android:id="@+id/diary_note_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/diary_title">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/diary_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="500"
+        android:background="@android:color/transparent"
+        android:layout_margin="10dp"
+        android:minLines="3"
+        android:padding="10dp"
+        android:hint="What's in your mind"
+        android:backgroundTint="@color/brownish"
+        android:textColorHint="@color/brownish"
+        android:textColor="@color/dark_greyish"
+        android:maxLines="10"/>
+    </ScrollView>
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/add_diary_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        app:indicatorColor="@color/brownish"
+        app:indicatorSize="20dp"
+        android:padding="10dp"
+        android:elevation="10dp"
+        android:layout_alignTop="@id/save_diary_button"
+        android:layout_alignBottom="@id/save_diary_button"
+        android:indeterminateBehavior="cycle"
+        android:indeterminate="true"
+        android:visibility="invisible"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save_diary_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:layout_alignParentBottom="true"
+        android:text="Save Diary"
+        android:textColor="@color/brownish"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/cream"
+        app:cornerRadius="0dp"
+        android:insetBottom="0dp"/>
+
+</RelativeLayout>
